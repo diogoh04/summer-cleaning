@@ -1,28 +1,27 @@
-import streamlit as st
-import pandas as pd
+    import streamlit as st
+    import pandas as pd
 
-st.set_page_config(layout="wide")
-st.title("🫧 Summer DeepClean")
+    st.set_page_config(layout="wide")
+    st.title("🫧 Summer DeepClean")
 
-# Upload múltiplos arquivos
-files = st.file_uploader("Upload Excel", type=["xlsx"], accept_multiple_files=True)
+    # Upload múltiplos arquivos
+    files = st.file_uploader("Upload Excel", type=["xlsx"], accept_multiple_files=True)
 
-if not files:
+    if not files:
     st.info("Faz upload de um ficheiro para começar")
     st.stop()
 
-dfs = []
+    dfs = []
 
-# 🔄 Ler todos os arquivos
-for file in files:
+    # 🔄 Ler todos os arquivos
+    for file in files:
     df = pd.read_excel(file, engine="openpyxl")
     df.columns = df.columns.str.lower().str.strip()
 
     # 🔍 detectar tipo
     if "questions" in df.columns:
         file_type = "audit"
-
-       df = df.rename(columns={
+        df = df.rename(columns={
             "checkpoint type": "house",
             "unnamed: 1": "area",
             "unnamed: 2": "room",
@@ -34,7 +33,7 @@ for file in files:
 
         df["apartment"] = df["area"].str.extract(r"(Apt \d+)")
         df["room"] = df["room"].astype(str)  
-        
+
     elif "clean type" in df.columns:
         file_type = "cleaning"
 
@@ -60,50 +59,50 @@ for file in files:
 
     dfs.append(df)
 
-# 🔗 juntar tudo
-df = pd.concat(dfs, ignore_index=True)
+    # 🔗 juntar tudo
+    df = pd.concat(dfs, ignore_index=True)
 
-# limpar
-df["house"] = df["house"].astype(str).str.strip()
-df["apartment"] = df["apartment"].astype(str).str.strip()
+    # limpar
+    df["house"] = df["house"].astype(str).str.strip()
+    df["apartment"] = df["apartment"].astype(str).str.strip()
 
-# FILTROS
+    # FILTROS
 
-houses = sorted(df["house"].dropna().unique())
-selected_house = st.selectbox("House", houses)
+    houses = sorted(df["house"].dropna().unique())
+    selected_house = st.selectbox("House", houses)
 
-df_house = df[df["house"] == selected_house]
+    df_house = df[df["house"] == selected_house]
 
-apartments = sorted(df_house["apartment"].dropna().unique())
-selected_apartment = st.selectbox("Apartment", apartments)
+    apartments = sorted(df_house["apartment"].dropna().unique())
+    selected_apartment = st.selectbox("Apartment", apartments)
 
-df_apartment = df_house[df_house["apartment"] == selected_apartment]
+    df_apartment = df_house[df_house["apartment"] == selected_apartment]
 
-# proteção
-if df_apartment.empty:
+    # proteção
+    if df_apartment.empty:
     st.warning("Sem dados para este filtro")
     st.stop()
 
-# 📊 MÉTRICAS
+    # 📊 MÉTRICAS
 
-done = (df_apartment["status"].str.upper() == "DONE").sum()
-refusal = (df_apartment["status"].str.upper() == "REFUSAL").sum()
-total = len(df_apartment)
+    done = (df_apartment["status"].str.upper() == "DONE").sum()
+    refusal = (df_apartment["status"].str.upper() == "REFUSAL").sum()
+    total = len(df_apartment)
 
-col1, col2, col3 = st.columns(3)
-col1.metric("Total", total)
-col2.metric("Done", done)
-col3.metric("Refusal", refusal)
+    col1, col2, col3 = st.columns(3)
+    col1.metric("Total", total)
+    col2.metric("Done", done)
+    col3.metric("Refusal", refusal)
 
-# LISTA
+    # LISTA
 
-status_color = {
+    status_color = {
     "done": "🟢 DONE",
     "refusal": "🔴 REFUSAL",
     "pending": "🟡 PENDING"
-}
+    }
 
-for i, row in df_apartment.iterrows():
+    for i, row in df_apartment.iterrows():
     col1, col2, col3 = st.columns([3,1,1])
 
     with col1:
@@ -117,8 +116,8 @@ for i, row in df_apartment.iterrows():
         if st.button("❌", key=f"refusal_{i}"):
             df.at[i, "status"] = "refusal"
 
-# 📤 Exportar
-if st.button("Exportar Excel"):
+    # 📤 Exportar
+    if st.button("Exportar Excel"):
     df.to_excel("updated.xlsx", index=False)
 
     with open("updated.xlsx", "rb") as f:
