@@ -5,7 +5,7 @@ st.set_page_config(layout="wide")
 st.title("🫧 Summer DeepClean")
 
     # Upload múltiplos arquivos
-    files = st.file_uploader("Upload Excel", type=["xlsx"], accept_multiple_files=True)
+files = st.file_uploader("Upload Excel", type=["xlsx"], accept_multiple_files=True)
 
     if not files:
     st.info("Faz upload de um ficheiro para começar")
