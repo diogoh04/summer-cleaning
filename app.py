@@ -56,8 +56,7 @@ else:
     # 🟡 status default
 if "status" not in df.columns:
         df["status"] = "pending"
-
-    dfs.append(df)
+        dfs.append(df)
 
     # 🔗 juntar tudo
     df = pd.concat(dfs, ignore_index=True)
