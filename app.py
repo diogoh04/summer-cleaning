@@ -51,17 +51,6 @@ if file_type == "audit":
     df["apartment"] = df["area"].str.extract(r"(Apt \d+)")
     df["room"] = df["area"].str.extract(r"(Room \d+)")
 
-elif file_type == "cleaning":
-    df = df.rename(columns={
-        "Room": "full_room",
-        "Clean Type": "clean_type",
-        "Complete?": "status"
-    })
-    # extrair dados
-    df["house"] = df["full_room"].str.extract(r"(Ashfield House \d+|Belgove \d+)")
-    df["apartment"] = df["full_room"].str.extract(r"(Apt \d+)")
-    df["room"] = df["full_room"].str.extract(r"(Room \d+)")
-
 # 🟡 Criar status
 if "status" not in df.columns:
     df["status"] = "pending"
