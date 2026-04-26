@@ -8,20 +8,22 @@ SAVE_FILE = "data.csv"
 st.set_page_config(layout="wide")
 st.title("🫧 Summer DeepClean")
 
-file = st.file_uploader("Upload Excel", type=["xlsx"], accept_multiple_files=True)
+files = st.file_uploader("Upload Excel", type=["xlsx"], accept_multiple_files=True)
 
-# 📥 Carregar dados
-for file in files:
-    df = pd.read_excel(file, engine="openpyxl")
-    st.write(f"📄 {file.name}")
-    
-if os.path.exists(SAVE_FILE):
-    df = pd.read_csv(SAVE_FILE)
-elif file is not None:
-    df = pd.read_excel(file, engine="openpyxl")
-else:
-    st.info("Faz upload do ficheiro para começar")
+if not files:
+    st.info("Faz upload de ficheiros para começar")
     st.stop()
+
+# juntar todos os ficheiros
+df_list = []
+
+for file in files:
+    temp_df = pd.read_excel(file, engine="openpyxl")
+    temp_df["source_file"] = file.name  # opcional (top)
+    df_list.append(temp_df)
+
+# juntar tudo
+df = pd.concat(df_list, ignore_index=True)
 
 # 🔍 detectar tipo de ficheiro
 columns = df.columns.str.lower()
