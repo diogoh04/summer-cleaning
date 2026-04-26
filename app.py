@@ -1,6 +1,8 @@
 import streamlit as st
 import pandas as pd
 import os
+import openpyxl
+st.write("openpyxl loaded")
 
 SAVE_FILE = "data.csv"
 
