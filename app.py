@@ -46,27 +46,26 @@ if file_type == "audit":
     "Questions": "details"
 })
     # extrair dados
-    df["area"] = df["area"].astype(str)
-    df["house"] = df["area"].str.extract(r"(Ashfield House \d+|Belgove \d+)")
+    df["house"] = df["house"].astype(str).str.strip()
+    df["area"] = df["area"].astype(str).str.strip()
+    df["room"] = df["room"].astype(str).str.strip()
+
     df["apartment"] = df["area"].str.extract(r"(Apt \d+)")
-    df["room"] = df["area"].str.extract(r"(Room \d+)")
 
 # 🟡 Criar status
 if "status" not in df.columns:
     df["status"] = "pending"
 
 # Filtro
-# HOUSE
 houses = sorted(df["house"].dropna().unique())
 selected_house = st.selectbox("House", houses)
 
 df_house = df[df["house"] == selected_house]
 
-# APARTAMENTO
 apartments = sorted(df_house["apartment"].dropna().unique())
 selected_apartment = st.selectbox("Apartment", apartments)
 
-df_apartment = df_house[df_house["apartment"] == selected_apartment]
+filtered_df = df_house[df_house["apartment"] == selected_apartment]
 
 # Status visual
 if file_type == "audit":
