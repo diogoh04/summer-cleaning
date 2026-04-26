@@ -7,19 +7,19 @@ st.title("🫧 Summer DeepClean")
     # Upload múltiplos arquivos
 files = st.file_uploader("Upload Excel", type=["xlsx"], accept_multiple_files=True)
 
-    if not files:
+if not files:
     st.info("Faz upload de um ficheiro para começar")
     st.stop()
 
     dfs = []
 
     # 🔄 Ler todos os arquivos
-    for file in files:
+for file in files:
     df = pd.read_excel(file, engine="openpyxl")
     df.columns = df.columns.str.lower().str.strip()
 
     # 🔍 detectar tiposs
-    if "questions" in df.columns:
+if "questions" in df.columns:
         file_type = "audit"
         df = df.rename(columns={
             "checkpoint type": "house",
@@ -34,7 +34,7 @@ files = st.file_uploader("Upload Excel", type=["xlsx"], accept_multiple_files=Tr
         df["apartment"] = df["area"].str.extract(r"(Apt \d+)")
         df["room"] = df["room"].astype(str)  
 
-    elif "clean type" in df.columns:
+elif "clean type" in df.columns:
         file_type = "cleaning"
 
         df = df.rename(columns={
@@ -50,11 +50,11 @@ files = st.file_uploader("Upload Excel", type=["xlsx"], accept_multiple_files=Tr
         df["apartment"] = df["full_room"].str.extract(r"(Apt \d+)")
         df["room"] = df["full_room"].str.extract(r"(Room \d+)")
 
-    else:
+else:
         continue
 
     # 🟡 status default
-    if "status" not in df.columns:
+if "status" not in df.columns:
         df["status"] = "pending"
 
     dfs.append(df)
@@ -79,7 +79,7 @@ files = st.file_uploader("Upload Excel", type=["xlsx"], accept_multiple_files=Tr
     df_apartment = df_house[df_house["apartment"] == selected_apartment]
 
     # proteção
-    if df_apartment.empty:
+if df_apartment.empty:
     st.warning("Sem dados para este filtro")
     st.stop()
 
@@ -102,23 +102,23 @@ files = st.file_uploader("Upload Excel", type=["xlsx"], accept_multiple_files=Tr
     "pending": "🟡 PENDING"
     }
 
-    for i, row in df_apartment.iterrows():
+for i, row in df_apartment.iterrows():
     col1, col2, col3 = st.columns([3,1,1])
 
-    with col1:
+with col1:
         st.write(f"🏠 {row['room']} - {status_color.get(str(row['status']).lower(), '🟡 PENDING')}")
 
-    with col2:
-        if st.button("✅", key=f"done_{i}"):
+with col2:
+    if st.button("✅", key=f"done_{i}"):
             df.at[i, "status"] = "done"
 
-    with col3:
-        if st.button("❌", key=f"refusal_{i}"):
+with col3:
+    if st.button("❌", key=f"refusal_{i}"):
             df.at[i, "status"] = "refusal"
 
     # 📤 Exportar
-    if st.button("Exportar Excel"):
+if st.button("Exportar Excel"):
     df.to_excel("updated.xlsx", index=False)
 
-    with open("updated.xlsx", "rb") as f:
+with open("updated.xlsx", "rb") as f:
         st.download_button("Download", f, "housekeeping_updated.xlsx")
