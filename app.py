@@ -3,6 +3,21 @@ import pandas as pd
 import os
 import openpyxl
 st.write("openpyxl loaded")
+import re
+
+def extract_base_area(area):
+    if pd.isna(area):
+        return None
+    
+    # pegar só "Apt X"
+    match = re.search(r"Apt \d+", str(area))
+    if match:
+        return match.group()
+    
+    # fallback (ex: Circulation Space)
+    return str(area)
+
+df["base_area"] = df["area"].apply(extract_base_area)
 
 SAVE_FILE = "data.csv"
 
@@ -33,10 +48,10 @@ if "status" not in df.columns:
     df["status"] = "pending"
 
 # 🎯 Filtro
-areas = df["area"].dropna().unique()
+areas = sorted(df["base_area"].dropna().unique())
 selected = st.selectbox("Filtrar área", areas)
 
-filtered_df = df[df["area"] == selected]
+filtered_df = df[df["base_area"] == selected]
 
 st.subheader(f"Área: {selected}")
 
