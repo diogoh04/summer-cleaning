@@ -18,7 +18,7 @@ import pandas as pd
     df = pd.read_excel(file, engine="openpyxl")
     df.columns = df.columns.str.lower().str.strip()
 
-    # 🔍 detectar tipo
+    # 🔍 detectar tiposs
     if "questions" in df.columns:
         file_type = "audit"
         df = df.rename(columns={
