@@ -59,23 +59,23 @@ if "status" not in df.columns:
         dfs.append(df)
 
     # 🔗 juntar tudo
-    df = pd.concat(dfs, ignore_index=True)
+        df = pd.concat(dfs, ignore_index=True)
 
-    # limpar
-    df["house"] = df["house"].astype(str).str.strip()
-    df["apartment"] = df["apartment"].astype(str).str.strip()
+        # limpar
+        df["house"] = df["house"].astype(str).str.strip()
+        df["apartment"] = df["apartment"].astype(str).str.strip()
 
-    # FILTROS
+        # FILTROS
 
-    houses = sorted(df["house"].dropna().unique())
-    selected_house = st.selectbox("House", houses)
+        houses = sorted(df["house"].dropna().unique())
+        selected_house = st.selectbox("House", houses)
 
-    df_house = df[df["house"] == selected_house]
+        df_house = df[df["house"] == selected_house]
 
-    apartments = sorted(df_house["apartment"].dropna().unique())
-    selected_apartment = st.selectbox("Apartment", apartments)
+        apartments = sorted(df_house["apartment"].dropna().unique())
+        selected_apartment = st.selectbox("Apartment", apartments)
 
-    df_apartment = df_house[df_house["apartment"] == selected_apartment]
+        df_apartment = df_house[df_house["apartment"] == selected_apartment]
 
     # proteção
 if df_apartment.empty:
