@@ -22,20 +22,19 @@ for file in files:
     if "questions" in df.columns:
         file_type = "audit"
 
-        df = df.rename(columns={
+       df = df.rename(columns={
             "checkpoint type": "house",
             "unnamed: 1": "area",
             "unnamed: 2": "room",
             "questions": "details"
-        })
+            })
 
+        df["house"] = df["house"].astype(str).str.strip()
         df["area"] = df["area"].astype(str)
 
-        # 🔥 extrair dados
-        df["house"] = df["area"].str.extract(r"(Ashfield House \d+|Belgrove \d+)")
         df["apartment"] = df["area"].str.extract(r"(Apt \d+)")
-        df["room"] = df["area"].str.extract(r"(Room \d+)")
-
+        df["room"] = df["room"].astype(str)  
+        
     elif "clean type" in df.columns:
         file_type = "cleaning"
 
