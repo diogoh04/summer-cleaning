@@ -43,10 +43,10 @@ selected_house = st.selectbox("House", houses)
 df_house = df[df["house"] == selected_house]
 
 # filtro apt (base_area)
-areas = sorted(df_house["base_area"].dropna().unique())
+areas = sorted(df_house["area"].dropna().unique())
 selected_area = st.selectbox("Apartamento", areas)
 
-filtered_df = df_house[df_house["base_area"] == selected_area]
+filtered_df = df_house[df_house["area"] == selected_area]
 # 🎨 Status visual
 status_color = {
     "done": "🟢 DONE",
