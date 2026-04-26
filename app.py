@@ -5,16 +5,17 @@ import os
 SAVE_FILE = "data.csv"
 
 st.set_page_config(layout="wide")
-st.title("🏨 Housekeeping Manager")
+st.title("🫧 Summer DeepClean")
 
 file = st.file_uploader("Upload Excel", type=["xlsx"])
 
 # 📥 Carregar dados
 if os.path.exists(SAVE_FILE):
     df = pd.read_csv(SAVE_FILE)
-elif file:
-    df = pd.read_excel(file)
+elif file is not None:
+    df = pd.read_excel(file, engine="openpyxl")
 else:
+    st.info("Faz upload do ficheiro para começar")
     st.stop()
 
 # 🧼 Ajustar colunas
