@@ -104,6 +104,7 @@ status_color = {
 }
 
 # 📱 Interface tipo app
+filtered_df = df_apartment
 for i, row in filtered_df.iterrows():
     col1, col2, col3 = st.columns([3,1,1])
 
