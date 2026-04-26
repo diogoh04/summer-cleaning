@@ -3,7 +3,6 @@ import pandas as pd
 import os
 import openpyxl
 st.write("openpyxl loaded")
-import re
 
 SAVE_FILE = "data.csv"
 
@@ -28,34 +27,26 @@ df = df.rename(columns={
     "Unnamed: 2": "room",
     "Questions": "details"
 })
+# 🧼 limpar dados
+df["house"] = df["house"].astype(str).str.strip()
+df["area"] = df["area"].astype(str).str.strip()
 
 # 🟡 Criar status
 if "status" not in df.columns:
     df["status"] = "pending"
 
 # 🎯 Filtro
-def extract_base_area(area):
-    if pd.isna(area):
-        return None
-    
-    # pegar só "Apt X"
-    match = re.search(r"Apt \d+", str(area))
-    if match:
-        return match.group()
-    
-    # fallback (ex: Circulation Space)
-    return str(area)
+# filtro house
+houses = sorted(df["house"].dropna().unique())
+selected_house = st.selectbox("House", houses)
 
-df["base_area"] = df["area"].apply(extract_base_area)
+df_house = df[df["house"] == selected_house]
 
-areas = sorted(df["base_area"].dropna().unique())
-selected = st.selectbox("Filtrar área", areas)
+# filtro apt (base_area)
+areas = sorted(df_house["base_area"].dropna().unique())
+selected_area = st.selectbox("Apartamento", areas)
 
-filtered_df = df[df["base_area"] == selected]
-
-st.subheader(f"Área: {selected}")
-df = df[df["base_area"].str.contains("Apt", na=False)]
-
+filtered_df = df_house[df_house["base_area"] == selected_area]
 # 🎨 Status visual
 status_color = {
     "done": "🟢 DONE",
